@@ -1,2 +1,18 @@
-# patrones-sociales-2
-Simulación de encuentros urbanos a partir de recorridos reales y coincidencia espacio-temporal. El proyecto modela cómo dos agentes pueden encontrarse en la ciudad sin coordinación previa, utilizando mapas reales, rutas A* y tiempo como variable determinante.
+# Encuentro urbano · simulación temporal
+
+Este proyecto explora cómo dos personas pueden encontrarse en la ciudad
+sin coordinación previa, a partir de recorridos reales, tiempo y espacio.
+
+La simulación utiliza:
+- mapas reales (OpenStreetMap)
+- rutas calculadas con A*
+- avance temporal de agentes
+- detección de coincidencia espacio-temporal
+
+La app permite:
+- elegir una zona urbana
+- definir hora y minuto de salida de cada agente
+- visualizar recorridos y detectar encuentros
+
+Demo interactiva:
+👉 (link de Streamlit acá)
