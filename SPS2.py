@@ -10,7 +10,7 @@ from streamlit_folium import st_folium
 from folium.plugins import Draw
 
 # ---------------- CONFIG ----------------
-st.set_page_config(layout="wide", page_title="Encuentro Urbano")
+st.set_page_config(layout="wide", page_title="Patrones Sociales")
 
 st.markdown("""
     <style>
@@ -19,7 +19,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.title("📍 Simulación: Dinámica de Encuentro")
+st.title("📍 Simulación: Patrones Sociales-Zonas Calientes")
 st.caption("Ajusta velocidades y tiempos para observar cómo varían los puntos de contacto.")
 
 # ---------------- SIDEBAR: CONFIGURACIÓN ----------------
@@ -153,4 +153,5 @@ try:
         st.warning("👈 Dibuja un área en el mapa interactivo para comenzar.")
 
 except Exception as e:
+
     st.error(f"Error en la simulación: {e}")
