@@ -17,7 +17,6 @@ st.markdown("""
 .agente-box { padding: 12px; border-radius: 10px; margin-bottom: 10px; }
 .a { background-color: rgba(0,0,255,0.05); border-left: 5px solid blue; }
 .b { background-color: rgba(0,255,0,0.05); border-left: 5px solid green; }
-.resultado { padding:15px; border-radius:10px; font-weight:bold; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -79,12 +78,23 @@ def simular(G, path, t0, vel):
 # ---------------- MAPA ----------------
 G, Gp, nodes_gdf, centro = cargar_grafo(place)
 
-st.subheader("Área de posible encuentro")
-m = folium.Map(location=centro, zoom_start=15)
-Draw(draw_options={"polygon": True, "polyline": False, "marker": False,
-                   "circle": False, "rectangle": False}).add_to(m)
+st.subheader("Área de posible encuentro (rectángulo)")
 
-mapa = st_folium(m, height=350, use_container_width=True)
+m = folium.Map(location=centro, zoom_start=15)
+
+Draw(
+    draw_options={
+        "rectangle": True,
+        "polygon": False,
+        "polyline": False,
+        "circle": False,
+        "marker": False,
+        "circlemarker": False
+    },
+    edit_options={"edit": False}
+).add_to(m)
+
+mapa = st_folium(m, height=360, use_container_width=True)
 
 # ---------------- EJECUCION ----------------
 if st.button("▶ Ejecutar simulación", use_container_width=True):
@@ -93,10 +103,10 @@ if st.button("▶ Ejecutar simulación", use_container_width=True):
     st.session_state.figura = None
 
     if not mapa or not mapa.get("all_drawings"):
-        st.session_state.resultado = ("error", "No se definió un área válida.")
+        st.session_state.resultado = ("error", "No se definió un rectángulo.")
     else:
-        poly = mapa["all_drawings"][-1]["geometry"]["coordinates"][0]
-        lons, lats = zip(*poly)
+        rect = mapa["all_drawings"][-1]["geometry"]["coordinates"][0]
+        lons, lats = zip(*rect)
         bbox = [min(lats), max(lats), min(lons), max(lons)]
 
         nodos_area = nodes_gdf.cx[bbox[2]:bbox[3], bbox[0]:bbox[1]].index.tolist()
@@ -130,12 +140,28 @@ if st.button("▶ Ejecutar simulación", use_container_width=True):
             fig, ax = plt.subplots(figsize=(8, 8))
             ox.plot_graph(Gp, ax=ax, show=False, close=False,
                           node_size=0, edge_color="#ddd", edge_linewidth=0.6)
+
             ox.plot_graph_route(Gp, pa, ax=ax, route_color="blue", route_alpha=0.4, show=False)
             ox.plot_graph_route(Gp, pb, ax=ax, route_color="green", route_alpha=0.4, show=False)
 
+            # INICIO / FIN A
+            for n, txt, col in [(oa, "INICIO A", "blue"), (da, "FIN A", "blue"),
+                                (ob, "INICIO B", "green"), (db, "FIN B", "green")]:
+                ax.scatter(Gp.nodes[n]["x"], Gp.nodes[n]["y"], c=col, s=70, zorder=5)
+                ax.annotate(txt, (Gp.nodes[n]["x"], Gp.nodes[n]["y"]),
+                            xytext=(10, 10), textcoords="offset points",
+                            fontsize=8, fontweight="bold",
+                            bbox=dict(boxstyle="round,pad=0.2", fc="white", ec=col))
+
             if encontro:
                 n, t = encontro
-                ax.scatter(Gp.nodes[n]["x"], Gp.nodes[n]["y"], c="red", s=120)
+                ax.scatter(Gp.nodes[n]["x"], Gp.nodes[n]["y"], c="red", s=140, zorder=6)
+                ax.annotate(f"ENCUENTRO\n{t.strftime('%H:%M')}",
+                            (Gp.nodes[n]["x"], Gp.nodes[n]["y"]),
+                            xytext=(0, 25), textcoords="offset points",
+                            ha="center", fontsize=9, fontweight="bold",
+                            bbox=dict(boxstyle="round", fc="red", ec="white"),
+                            color="white")
                 st.session_state.resultado = ("ok", f"Encuentro detectado a las {t.strftime('%H:%M')}")
             else:
                 st.session_state.resultado = ("info", "No se produjo encuentro (tiempo o espacio).")
