@@ -38,23 +38,8 @@ MODALIDADES = {
 
 st.subheader("Configuración")
 
+# -------- BARRIO --------
 place = st.text_input("Zona / Barrio", "Recoleta, Buenos Aires, Argentina")
-
-col1, col2 = st.columns(2)
-
-with col1:
-    st.markdown('<div class="agente-box a"><b>Agente A</b>', unsafe_allow_html=True)
-    ha = st.slider("Hora salida A", 0, 23, 9)
-    ma = st.slider("Minuto salida A", 0, 59, 0)
-    va = st.selectbox("Velocidad A", MODALIDADES.keys())
-    st.markdown('</div>', unsafe_allow_html=True)
-
-with col2:
-    st.markdown('<div class="agente-box b"><b>Agente B</b>', unsafe_allow_html=True)
-    hb = st.slider("Hora salida B", 0, 23, 9)
-    mb = st.slider("Minuto salida B", 0, 59, 5)
-    vb = st.selectbox("Velocidad B", MODALIDADES.keys())
-    st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------------- FUNCIONES ----------------
 @st.cache_data
@@ -95,6 +80,25 @@ Draw(
 ).add_to(m)
 
 mapa = st_folium(m, height=360, use_container_width=True)
+
+# ---------------- SLIDERS ----------------
+st.subheader("Parámetros de los agentes")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.markdown('<div class="agente-box a"><b>Agente A</b>', unsafe_allow_html=True)
+    ha = st.slider("Hora salida A", 0, 23, 9)
+    ma = st.slider("Minuto salida A", 0, 59, 0)
+    va = st.selectbox("Velocidad A", MODALIDADES.keys())
+    st.markdown('</div>', unsafe_allow_html=True)
+
+with col2:
+    st.markdown('<div class="agente-box b"><b>Agente B</b>', unsafe_allow_html=True)
+    hb = st.slider("Hora salida B", 0, 23, 9)
+    mb = st.slider("Minuto salida B", 0, 59, 5)
+    vb = st.selectbox("Velocidad B", MODALIDADES.keys())
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------------- EJECUCION ----------------
 if st.button("▶ Ejecutar simulación", use_container_width=True):
@@ -144,7 +148,6 @@ if st.button("▶ Ejecutar simulación", use_container_width=True):
             ox.plot_graph_route(Gp, pa, ax=ax, route_color="blue", route_alpha=0.4, show=False)
             ox.plot_graph_route(Gp, pb, ax=ax, route_color="green", route_alpha=0.4, show=False)
 
-            # INICIO / FIN A
             for n, txt, col in [(oa, "INICIO A", "blue"), (da, "FIN A", "blue"),
                                 (ob, "INICIO B", "green"), (db, "FIN B", "green")]:
                 ax.scatter(Gp.nodes[n]["x"], Gp.nodes[n]["y"], c=col, s=70, zorder=5)
