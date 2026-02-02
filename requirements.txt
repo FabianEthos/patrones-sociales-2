@@ -4,6 +4,6 @@ networkx
 matplotlib
 folium
 streamlit-folium
+geopandas
 shapely
 pyproj
-geopandas
